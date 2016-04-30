@@ -1,7 +1,6 @@
 # input T-grid model output and extract data from along Thalweg
 # output to file ending in _Thw.nc
 import os
-import re
 from sys import argv
 
 # from geopy.distance import great_circle
@@ -15,12 +14,11 @@ fname = argv[1]
 fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
 f = nc.Dataset(fname, 'r')
 f2 = nc.Dataset(fname2, 'w')
-fkeys = f.variables.keys()
-for ik in fkeys:
-    match = re.search(r'depth.', ik)
-    if match:
-        zkey = match.group(0)
-z = f.variables[zkey][:]
+
+z_var = [
+    k for k in f.variables
+    if k.startswith('depth') and not k.endswith('bounds')][0]
+z = f.variables[z_var][:]
 t = f.variables['time_counter'][:]
 
 thw0 = np.loadtxt(
@@ -52,7 +50,7 @@ for kk in range(0, len(thw2)):
     lon0 = lon
 
 print('starting loop')
-for ik in fkeys:
+for ik in f.variables:
     if np.size(f.variables[ik].shape) == 4:
         f2var = f2.createVariable(ik, f.variables[ik].datatype,
                                   ('time_counter', 'deptht', 'distance'))
