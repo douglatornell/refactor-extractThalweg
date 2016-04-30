@@ -1,10 +1,12 @@
 # input T-grid model output and extract data from along Thalweg
 # output to file ending in _Thw.nc
-import numpy as np
-import netCDF4 as nc
-# from geopy.distance import great_circle
-from sys import argv
 import re
+from sys import argv
+
+# from geopy.distance import great_circle
+import netCDF4 as nc
+import numpy as np
+
 
 fname = argv[1]
 
