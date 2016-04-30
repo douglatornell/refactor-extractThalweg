@@ -20,7 +20,8 @@ z = f.variables[zkey][:]
 t = f.variables['time_counter'][:]
 
 thw0 = np.loadtxt(
-    '/ocean/eolson/MEOPAR/tools/bathymetry/thalweg_working.txt', delimiter=" ", unpack=False)
+    '/ocean/eolson/MEOPAR/tools/bathymetry/thalweg_working.txt',
+    delimiter=" ", unpack=False)
 thw2 = [tuple((int(k[0]), int(k[1]))) for k in thw0]
 
 f2.createDimension('time_counter', None)
