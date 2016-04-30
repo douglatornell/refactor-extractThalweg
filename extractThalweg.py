@@ -12,7 +12,7 @@ fname = argv[1]
 
 fname2 = fname[:-3] + '_Thw.nc'
 f = nc.Dataset(fname, 'r')
-# f2 = nc.Dataset(fname2, 'w')
+f2 = nc.Dataset(fname2, 'w')
 fkeys = f.variables.keys()
 for ik in fkeys:
     match = re.search(r'depth.', ik)
@@ -26,9 +26,9 @@ thw0 = np.loadtxt(
     delimiter=" ", unpack=False)
 thw2 = [tuple((int(k[0]), int(k[1]))) for k in thw0]
 
-# f2.createDimension('time_counter', None)
-# f2.createDimension('deptht', len(f.dimensions['deptht']))
-# f2.createDimension('distance', len(thw2))
+f2.createDimension('time_counter', None)
+f2.createDimension('deptht', len(f.dimensions['deptht']))
+f2.createDimension('distance', len(thw2))
 
 idist = np.zeros((len(thw2), 1))
 cdist = np.zeros((len(thw2), 1))
@@ -49,24 +49,24 @@ for kk in range(0, len(thw2)):
     lat0 = lat
     lon0 = lon
 
-# print('starting loop')
-# for ik in fkeys:
-#     if np.size(f.variables[ik].shape) == 4:
-#         f2var = f2.createVariable(ik, f.variables[ik].datatype,
-#                                   ('time_counter', 'deptht', 'distance'))
-#         print(ik)
-#         thwvar = np.empty((len(t), len(z), len(thw2)))
-#         ivar = np.copy(f.variables[ik][:, :, :, :])
-#         for kk in range(len(thw2)):
-#             thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
-#         print(thwvar[0, 5, :10])
-#         f2var[:, :, :] = thwvar
+print('starting loop')
+for ik in fkeys:
+    if np.size(f.variables[ik].shape) == 4:
+        f2var = f2.createVariable(ik, f.variables[ik].datatype,
+                                  ('time_counter', 'deptht', 'distance'))
+        print(ik)
+        thwvar = np.empty((len(t), len(z), len(thw2)))
+        ivar = np.copy(f.variables[ik][:, :, :, :])
+        for kk in range(len(thw2)):
+            thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
+        print(thwvar[0, 5, :10])
+        f2var[:, :, :] = thwvar
 
-# new_tc = f2.createVariable('time_counter', float, ('time_counter'))
-# new_tc[:] = t
-# new_z = f2.createVariable('deptht', float, ('deptht'))
-# new_z[:] = z
-# # new_dist = f2.createVariable('distance', float, ('distance'))
-# # new_dist[:] = cdist
-# f2.close()
+new_tc = f2.createVariable('time_counter', float, ('time_counter'))
+new_tc[:] = t
+new_z = f2.createVariable('deptht', float, ('deptht'))
+new_z[:] = z
+# new_dist = f2.createVariable('distance', float, ('distance'))
+# new_dist[:] = cdist
+f2.close()
 f.close()
