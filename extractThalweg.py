@@ -2,7 +2,7 @@
 # output to file ending in _Thw.nc
 import numpy as np
 import netCDF4 as nc
-from geopy.distance import great_circle
+# from geopy.distance import great_circle
 from sys import argv
 import re
 
@@ -41,7 +41,7 @@ for kk in range(0, len(thw2)):
     else:
         jj = thw2[kk][0]
         ii = thw2[kk][1]
-        idist[kk] = great_circle((lat0, lon0), (lat, lon)).km  # km
+        # idist[kk] = great_circle((lat0, lon0), (lat, lon)).km  # km
         # gsw.distance([lon0,lon],[lat0,lat])/1000 # km
         cdist[kk] = idist[kk] + cdist[kk - 1]
     lat0 = lat
@@ -64,7 +64,7 @@ new_tc = f2.createVariable('time_counter', float, ('time_counter'))
 new_tc[:] = t
 new_z = f2.createVariable('deptht', float, ('deptht'))
 new_z[:] = z
-new_dist = f2.createVariable('distance', float, ('distance'))
-new_dist[:] = cdist
+# new_dist = f2.createVariable('distance', float, ('distance'))
+# new_dist[:] = cdist
 f2.close()
 f.close()
