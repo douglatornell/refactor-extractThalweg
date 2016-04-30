@@ -1,5 +1,6 @@
 # input T-grid model output and extract data from along Thalweg
 # output to file ending in _Thw.nc
+import os
 import re
 from sys import argv
 
@@ -10,7 +11,8 @@ import numpy as np
 
 fname = argv[1]
 
-fname2 = fname[:-3] + '_Thw.nc'
+# fname2 = fname[:-3] + '_Thw.nc'
+fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
 f = nc.Dataset(fname, 'r')
 f2 = nc.Dataset(fname2, 'w')
 fkeys = f.variables.keys()
