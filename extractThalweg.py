@@ -47,11 +47,11 @@ f2.createDimension('distance', thw2.shape[0])
 
 vars_4d = (var for var in f.variables if f.variables[var].ndim == 4)
 var_dims = ('time_counter', 'deptht', 'distance')
+thwvar = np.empty((t.shape[0], z.shape[0], thw2.shape[0]))
 print('starting loop')
 for var in vars_4d:
     f2var = f2.createVariable(var, f.variables[var].datatype, var_dims)
     print(var)
-    thwvar = np.empty((t.shape[0], z.shape[0], thw2.shape[0]))
     ivar = np.copy(f.variables[var][:, :, :, :])
     for kk in range(len(thw2)):
         thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
