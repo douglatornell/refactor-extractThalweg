@@ -43,7 +43,7 @@ fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
 f2 = nc.Dataset(fname2, 'w')
 f2.createDimension('time_counter', None)
 f2.createDimension(z_var, len(f.dimensions[z_var]))
-f2.createDimension('distance', len(thw2))
+f2.createDimension('distance', thw2.shape[0])
 
 vars_4d = (var for var in f.variables if f.variables[var].ndim == 4)
 var_dims = ('time_counter', 'deptht', 'distance')
@@ -51,7 +51,7 @@ print('starting loop')
 for var in vars_4d:
     f2var = f2.createVariable(var, f.variables[var].datatype, var_dims)
     print(var)
-    thwvar = np.empty((len(t), len(z), len(thw2)))
+    thwvar = np.empty((t.shape[0], z.shape[0], thw2.shape[0]))
     ivar = np.copy(f.variables[var][:, :, :, :])
     for kk in range(len(thw2)):
         thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
