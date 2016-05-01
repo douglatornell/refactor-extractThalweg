@@ -9,12 +9,7 @@ import numpy as np
 
 
 fname = argv[1]
-
-# fname2 = fname[:-3] + '_Thw.nc'
-fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
 f = nc.Dataset(fname, 'r')
-f2 = nc.Dataset(fname2, 'w')
-
 z_var = [
     k for k in f.variables
     if k.startswith('depth') and not k.endswith('bounds')][0]
@@ -24,10 +19,6 @@ t = f.variables['time_counter'][:]
 thw2 = np.loadtxt(
     '/ocean/eolson/MEOPAR/tools/bathymetry/thalweg_working.txt',
     delimiter=" ", dtype=int)
-
-f2.createDimension('time_counter', None)
-f2.createDimension('deptht', len(f.dimensions['deptht']))
-f2.createDimension('distance', len(thw2))
 
 idist = np.zeros((len(thw2), 1))
 cdist = np.zeros((len(thw2), 1))
@@ -47,6 +38,13 @@ for kk in range(0, len(thw2)):
         cdist[kk] = idist[kk] + cdist[kk - 1]
     lat0 = lat
     lon0 = lon
+
+# fname2 = fname[:-3] + '_Thw.nc'
+fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
+f2 = nc.Dataset(fname2, 'w')
+f2.createDimension('time_counter', None)
+f2.createDimension('deptht', len(f.dimensions['deptht']))
+f2.createDimension('distance', len(thw2))
 
 print('starting loop')
 for ik in f.variables:
