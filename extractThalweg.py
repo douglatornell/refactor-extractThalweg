@@ -45,11 +45,11 @@ f2.createDimension('time_counter', None)
 f2.createDimension('deptht', len(f.dimensions['deptht']))
 f2.createDimension('distance', len(thw2))
 
-print('starting loop')
 vars_4d = (var for var in f.variables if f.variables[var].ndim == 4)
+var_dims = ('time_counter', 'deptht', 'distance')
+print('starting loop')
 for var in vars_4d:
-    f2var = f2.createVariable(var, f.variables[var].datatype,
-                              ('time_counter', 'deptht', 'distance'))
+    f2var = f2.createVariable(var, f.variables[var].datatype, var_dims)
     print(var)
     thwvar = np.empty((len(t), len(z), len(thw2)))
     ivar = np.copy(f.variables[var][:, :, :, :])
