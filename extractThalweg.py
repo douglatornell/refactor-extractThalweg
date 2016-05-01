@@ -3,7 +3,6 @@
 import os
 from sys import argv
 
-# from geopy.distance import great_circle
 import netCDF4 as nc
 import numpy as np
 
@@ -20,24 +19,24 @@ thw2 = np.loadtxt(
     '/ocean/eolson/MEOPAR/tools/bathymetry/thalweg_working.txt',
     delimiter=" ", dtype=int)
 
-idist = np.zeros((len(thw2), 1))
-cdist = np.zeros((len(thw2), 1))
-for kk in range(0, len(thw2)):
-    jj = thw2[kk][0]
-    ii = thw2[kk][1]
-    lat = f.variables['nav_lat'][jj, ii]
-    lon = f.variables['nav_lon'][jj, ii]
-    if kk == 0:
-        idist[kk] = 0
-        cdist[kk] = 0
-    else:
-        jj = thw2[kk][0]
-        ii = thw2[kk][1]
-        # idist[kk] = great_circle((lat0, lon0), (lat, lon)).km  # km
-        # gsw.distance([lon0,lon],[lat0,lat])/1000 # km
-        cdist[kk] = idist[kk] + cdist[kk - 1]
-    lat0 = lat
-    lon0 = lon
+# idist = np.zeros((len(thw2), 1))
+# cdist = np.zeros((len(thw2), 1))
+# for kk in range(0, len(thw2)):
+#     jj = thw2[kk][0]
+#     ii = thw2[kk][1]
+#     lat = f.variables['nav_lat'][jj, ii]
+#     lon = f.variables['nav_lon'][jj, ii]
+#     if kk == 0:
+#         idist[kk] = 0
+#         cdist[kk] = 0
+#     else:
+#         jj = thw2[kk][0]
+#         ii = thw2[kk][1]
+#         # idist[kk] = great_circle((lat0, lon0), (lat, lon)).km  # km
+#         # gsw.distance([lon0,lon],[lat0,lat])/1000 # km
+#         cdist[kk] = idist[kk] + cdist[kk - 1]
+#     lat0 = lat
+#     lon0 = lon
 
 # fname2 = fname[:-3] + '_Thw.nc'
 fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
