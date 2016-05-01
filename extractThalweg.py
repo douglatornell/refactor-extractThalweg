@@ -52,7 +52,7 @@ print('starting loop')
 for var in vars_4d:
     f2var = f2.createVariable(var, f.variables[var].datatype, var_dims)
     print(var)
-    ivar = np.copy(f.variables[var][:, :, :, :])
+    ivar = f.variables[var][:]
     for kk in range(len(thw2)):
         thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
     print(thwvar[0, 5, :10])
