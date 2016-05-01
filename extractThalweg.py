@@ -6,6 +6,8 @@ from sys import argv
 import netCDF4 as nc
 import numpy as np
 
+from salishsea_tools import geo_tools
+
 
 fname = argv[1]
 f = nc.Dataset(fname, 'r')
@@ -18,25 +20,12 @@ t = f.variables['time_counter'][:]
 thw2 = np.loadtxt(
     '/ocean/eolson/MEOPAR/tools/bathymetry/thalweg_working.txt',
     delimiter=" ", dtype=int)
+lons = f.variables['nav_lon'][:]
+lats = f.variables['nav_lat'][:]
+lons_thal = lons[thw2[:, 0], thw2[:, 1]]
+lats_thal = lats[thw2[:, 0], thw2[:, 1]]
+cdist = geo_tools.distance_along_curve(lons_thal, lats_thal)
 
-# idist = np.zeros((len(thw2), 1))
-# cdist = np.zeros((len(thw2), 1))
-# for kk in range(0, len(thw2)):
-#     jj = thw2[kk][0]
-#     ii = thw2[kk][1]
-#     lat = f.variables['nav_lat'][jj, ii]
-#     lon = f.variables['nav_lon'][jj, ii]
-#     if kk == 0:
-#         idist[kk] = 0
-#         cdist[kk] = 0
-#     else:
-#         jj = thw2[kk][0]
-#         ii = thw2[kk][1]
-#         # idist[kk] = great_circle((lat0, lon0), (lat, lon)).km  # km
-#         # gsw.distance([lon0,lon],[lat0,lat])/1000 # km
-#         cdist[kk] = idist[kk] + cdist[kk - 1]
-#     lat0 = lat
-#     lon0 = lon
 
 # fname2 = fname[:-3] + '_Thw.nc'
 fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
@@ -47,20 +36,19 @@ f2.createDimension('distance', thw2.shape[0])
 
 vars_4d = (var for var in f.variables if f.variables[var].ndim == 4)
 var_dims = ('time_counter', 'deptht', 'distance')
-thwvar = np.empty((t.shape[0], z.shape[0], thw2.shape[0]))
 print('starting loop')
 for var in vars_4d:
     f2var = f2.createVariable(var, f.variables[var].datatype, var_dims)
     print(var)
     ivar = f.variables[var][:]
-    thwvar[:] = ivar[:, :, thw2[:, 0], thw2[:, 1]]
-    print(thwvar[0, 5, :10])
-    f2var[:] = thwvar
+    f2var[:] = ivar[..., thw2[:, 0], thw2[:, 1]]
+    print(f2var[0, 5, :10])
+
 new_tc = f2.createVariable('time_counter', float, ('time_counter'))
 new_tc[:] = t
 new_z = f2.createVariable('deptht', float, ('deptht'))
 new_z[:] = z
-# new_dist = f2.createVariable('distance', float, ('distance'))
-# new_dist[:] = cdist
+new_dist = f2.createVariable('distance', float, ('distance'))
+new_dist[:] = cdist
 f2.close()
 f.close()
