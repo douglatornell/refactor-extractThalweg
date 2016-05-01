@@ -42,7 +42,7 @@ thw2 = np.loadtxt(
 fname2 = os.path.basename(fname)[:-3] + '_Thw.nc'
 f2 = nc.Dataset(fname2, 'w')
 f2.createDimension('time_counter', None)
-f2.createDimension(z_var, len(f.dimensions[z_var]))
+f2.createDimension(z_var, f.dimensions[z_var].size)
 f2.createDimension('distance', thw2.shape[0])
 
 vars_4d = (var for var in f.variables if f.variables[var].ndim == 4)
