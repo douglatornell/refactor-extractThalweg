@@ -46,17 +46,17 @@ f2.createDimension('deptht', len(f.dimensions['deptht']))
 f2.createDimension('distance', len(thw2))
 
 print('starting loop')
-for ik in f.variables:
-    if np.size(f.variables[ik].shape) == 4:
-        f2var = f2.createVariable(ik, f.variables[ik].datatype,
-                                  ('time_counter', 'deptht', 'distance'))
-        print(ik)
-        thwvar = np.empty((len(t), len(z), len(thw2)))
-        ivar = np.copy(f.variables[ik][:, :, :, :])
-        for kk in range(len(thw2)):
-            thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
-        print(thwvar[0, 5, :10])
-        f2var[:, :, :] = thwvar
+vars_4d = (var for var in f.variables if f.variables[var].ndim == 4)
+for var in vars_4d:
+    f2var = f2.createVariable(var, f.variables[var].datatype,
+                              ('time_counter', 'deptht', 'distance'))
+    print(var)
+    thwvar = np.empty((len(t), len(z), len(thw2)))
+    ivar = np.copy(f.variables[var][:, :, :, :])
+    for kk in range(len(thw2)):
+        thwvar[:, :, kk] = ivar[:, :, thw2[kk][0], thw2[kk][1]]
+    print(thwvar[0, 5, :10])
+    f2var[:, :, :] = thwvar
 
 new_tc = f2.createVariable('time_counter', float, ('time_counter'))
 new_tc[:] = t
