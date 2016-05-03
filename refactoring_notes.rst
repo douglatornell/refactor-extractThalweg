@@ -4,11 +4,19 @@ Notes
 
 conda env:
 
-* python3.5
-* netCDF4
 * ipython
+* python3.5
+* matplotlib
+* netCDF4
+* numpy
+* pandas
+* pytz
+* requests
+* scipy
 * pip:
 
+  * angles
+  * arrow
   * autopep8
   * ipdb
 
@@ -343,3 +351,47 @@ Replace distance along thalweg calc loop w/ geo_tools.diatance_along_curve()::
   user  0m24.730s
   sys 0m9.870s
 
+
+The resulting extractThalweg.py script has, I think, all the things that can be pushed to C code done.
+The speed-up is almost a factor of 2.
+
+The other question is:
+Is it worth calculating a thalweg file for every time step of a bunch of results files?
+
+If you simply want to plot contour thalweg sections of an arbitrary variable at an arbitrary time step, the code is pretty simple::
+
+  import netCDF4 as nc
+  import matplotlib.pyplot as plt
+
+  from salishsea_tools import (
+      tidetools,
+      visualisations,
+  )
+
+
+  %matplotlib inline
+
+
+  mesh_mask = nc.Dataset('../NEMO-forcing/grid/mesh_mask_downbyone.nc')
+  grid_B = nc.Dataset('../NEMO-forcing/grid/bathy_downonegrid.nc')
+  grid_hr = nc.Dataset('SalishSea_1h_20160210_20160211_grid_T.nc')
+
+  time_step = 7
+  var_name = 'vosaline'
+
+  bathy, lons, lats = tidetools.get_bathy_data(grid_B)
+  var = grid_hr.variables[var_name][time_step, ...]
+
+  fig, ax = plt.subplots(1, 1, figsize=(15, 5))
+  visualisations.contour_thalweg(
+      ax, var, bathy, lons, lats, mesh_mask, 'gdept_0', clevels='salinity')
+  ax.set_ylim([450,0])
+
+The mesh mask depth variable name
+(`gdept_0` above)
+needs to be appropriate to the `[tuvw]` grid that the variable you are plotting is on.
+
+If the variable you are plotting is other than salinity or temperature,
+provide a NumPy array of contour colour levels for the `clevels` argument.
+
+`visualisations.contour_thalweg()` could probably be improved to include the `ax.set_ylim([450,0])` statement that flips the y-axis to make the depth orientation correct.
